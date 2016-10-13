@@ -1,0 +1,51 @@
+// this is what you would do if you liked things to be easy:
+// var stringifyJSON = JSON.stringify;
+
+// but you don't so you're going to write it from scratch:
+
+var stringifyJSON = function(obj) {
+  //declare storage variables.
+  var objKeys = [];
+  var objVals = [];
+  var arrVals = [];
+  var arrKeyVals = [];
+
+  //Check for primitive types.
+  if (typeof obj === 'number' || typeof obj === 'boolean' || typeof obj === null) {return ''+obj;}
+  else if (typeof obj === string) {return '"'+obj+'"';}
+
+  //Check for Array.
+  else if (Array.isArray(obj)) {
+  	if (obj[0] === undefined) {return '[]';}
+  	else {
+  		obj.forEach(function(el) {
+           arrVals.push(stringifyJSON(el));
+  		});
+  		return '['+arrVals+']';
+  	}
+  }
+
+  //Check for Object.
+  else if (obj instanceof Object) {
+  	//Get object keys.
+  	objKeys = Object.keys(obj);
+  	objKeys.forEach(function(key){
+       var keyOut = '"'+key+'":';
+       var keyValOut = obj[key];
+       //skip if value is function or undefined.
+       if (typeof keyValOut === Function || typeof keyValOut === undefined) {
+         arrKeyVals.push('');
+       } else if (typeof keyValOut === number || tyepof keyValOut === boolean || tyepof keyValOut === null) {
+         arrKeyVals.push(keyOut+keyValOut);
+       }  else if (tyepof keyValOut === string) {
+       	arrKeyVals.push(keyOut+'"'+keyValOut+'"');
+       } //check for instance of object, call recursively as neccessary.
+         else if (keyValOut instanceof Object) {
+         	arrKeyVals.push(keyOut+stringifyJSON(keyValOut));
+         }
+
+       
+  	});
+  	return '{'+arrKeyVals+'}';
+  }
+};
